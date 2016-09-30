@@ -43,11 +43,119 @@
   </div>
   <!-- End of Row -->
 
+  <hr>
 
   <!-- Start of form! -->
   <div class="row form-header">
     <div class="column small-12">
-      <p class="form-header-text">Add New Player</p>
+      <p class="form-header-text">Search NFL Players</p>
+    </div>
+  </div>
+  <div class="row align-center form-add-player">
+    <div class="column small-12">
+
+      <form id="form-search-players">
+        <div class="row align-spaced">
+          <div class="column small-12 large-5">
+
+            <label>Name
+              <input name="playerName" type="text" placeholder="Hingle McKringleberry">
+            </label>
+          </div>
+
+          <div class="column small-12 large-5">
+
+            <label>Team
+          <select name="nfl-search-team">
+            <option value="ANY">Any Team</option>
+            <option value="ARI">Arizona Cardinals</option>
+            <option value="ATL">Atlanta Falcons</option>
+            <option value="BAL">Baltimore Ravens</option>
+            <option value="BUF">Buffalo Bills</option>
+            <option value="CAR">Carolina Panthers</option>
+            <option value="CHI">Chicago Bears</option>
+            <option value="CIN">Cincinnati Bengals</option>
+            <option value="CLE">Cleveland Browns</option>
+            <option value="DAL">Dallas Cowboys</option>
+            <option value="DEN">Denver Broncos</option>
+            <option value="DET">Detroit Lions</option>
+            <!--<option value="DRF"></option>-->
+            <!--<option value="FA"></option>-->
+            <option value="GB">Green Bay Packers</option>
+            <option value="HOU">Houston Texans</option>
+            <option value="IND">Indianapolis Colts</option>
+            <option value="JAC">Jacksonville Jaguars</option>
+            <option value="KC">Kansas City Chiefs</option>
+            <option value="LAR">Los Angelos Rams</option>
+            <option value="MIA">Miami Dolphins</option>
+            <option value="MIN">Minnesota Vikings</option>
+            <option value="NE">New England Patriots</option>
+            <option value="NO">New Orleans Saints</option>
+            <option value="NYG">New York Giants</option>
+            <option value="NYJ">New York Jets</option>
+            <option value="OAK">Oakland Raiders</option>
+            <option value="PHI">Philadelphia Eagles</option>
+            <option value="PIT">Pittsburgh Steelers</option>
+            <option value="SD">San Diego Chargers</option>
+            <option value="SEA">Seattle Seahawks</option>
+            <option value="SF">San Francisco 49ers</option>
+            <option value="TB">Tampa Bay Buccaneers</option>
+            <option value="TEN">Tennessee Titans</option>
+            <option value="WAS">Washington Redskins</option>
+          </select>
+        </label>
+
+          </div>
+        </div>
+
+    <div class="row align-spaced">
+      <div class="column small-12 large-5">
+
+        <label>Position
+          <select name="nfl-search-position">
+            <option value="ANY">Any Position</option>
+            <option value="DB">Defensive Back</option>
+            <option value="DL">Defensive Line</option>
+            <option value="K">Kicker</option>
+            <option value="LB">Linebacker</option>
+            <option value="QB">Quarter Back</option>
+            <option value="RB">Running Back</option>
+            <option value="TE">Tight End</option>
+            <option value="WR">Wide Receiver</option>
+          </select>
+        </label>
+        </div>
+
+        <div class="column small-12 large-5">
+
+          <label>Player Number
+            <input name="nfl-search-number" type="number" placeholder="44">
+          </label>
+
+        </div>
+      </div>
+    </div>
+    </form>
+
+  </div>
+  </div>
+  <!-- end of form! -->
+
+  <div class="row align-center row-nfl-container" id="row-nfl-container">
+
+    <div class="column small-6 large-3 card-container">
+
+    </div>
+
+  </div>
+
+
+  <hr>
+
+  <!-- Start of form! -->
+  <div class="row form-header">
+    <div class="column small-12">
+      <p class="form-header-text">Add Custom Player</p>
     </div>
   </div>
   <div class="row align-center form-add-player">
