@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Fantasy Feetball Roster</title>
+  <link rel="stylesheet" href="css/app.css">
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+  <div class="row header-background full-width">
+    <div class="column small-12">
+      <h3 class="text-center header-text">My NFL Roster</h3>
+    </div>
+  </div>
+
+  <div class="row align-center row-roster-container" id="row-roster-container">
+
+    <!--<div class="column small-6 large-3 card-container">
+      <div class="card text-center">
+        <button class="button alert removeButton">Remove Player</button>
+        <img class="player-image" src="resources/player-shadow.jpg" alt="NFL Player Silhouette">
+        <p class="player-name">John Steeltoes</p>
+        <p class="player-position">Runningback</p>
+        <p class="player-number">#44</p>
+      </div>
+    </div>-->
+
+    <div class="column small-6 large-3 card-container">
+      <div class="card text-center">
+        <button class="button alert removeButton disabled">Remove Player</button>
+        <img class="player-image" src="resources/player-shadow.jpg" alt="NFL Player Silhouette">
+        <p class="player-name">----</p>
+        <p class="player-position">----</p>
+        <p class="player-number">----</p>
+      </div>
+    </div>
+
+
+  </div>
+  <!-- End of Row -->
+
+
+  <!-- Start of form! -->
+  <div class="row form-header">
+    <div class="column small-12">
+      <p class="form-header-text">Add New Player</p>
+    </div>
+  </div>
+  <div class="row align-center form-add-player">
+    <div class="column small-12">
+
+      <form id="form-add-player">
+        <div class="row align-center">
+          <label>Player Name
+          <input name="playerName" required type="text" placeholder="Hingle McKringleberry">
+        </label>
+        </div>
+        <div class="row align-center">
+          <label>Position
+          <select name="playerPosition">
+            <option value="Center">Center</option>
+            <option value="Offensive Guard">Offensive Guard</option>
+            <option value="Offensive Tackle">Offensive Tackle</option>
+            <option value="Running Back">Running Back</option>
+            <option value="Baby Back">Baby Back</option>
+            <option value="Nickleback">Nickleback</option>
+            <option value="Wide Receiver">Wide Receiver</option>
+            <option value="Narrow Receiver">Narrow Receiver</option>
+            <option value="Tight End">Tight End</option>
+            <option value="Tightest End">Tightest End</option>
+          </select>
+        </label>
+        </div>
+        <div class="row align-center">
+          <label>Player Number
+          <input name="playerNumber" type="number" required placeholder="44">
+        </label>
+        </div>
+        <div class="row align-center">
+          <button type="submit" class="button button-add-player text-center">Add Player</button>
+        </div>
+      </form>
+      <!-- end of form! -->
+
+    </div>
+  </div>
+
+
+  <script type="text/javascript" src="js/app.js"></script>
+</body>
+
+</html>
