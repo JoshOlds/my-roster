@@ -1,19 +1,20 @@
 var debugFlag = true;
 
-var playerArr = [];
-
 
 function PlayerService() {
-    var _players = []; //My private array of PlayerService
+    var _myPlayers = []; //My private array of PlayerService
+    var _pageIndex = 0;
 
-    var playersData = []; // NFL players data
+    var _nflPlayers = []; // NFL players data
+    var _filteredPlayers = [];
 
-    function Player(name, position, playerNumber, imageLink) {
-        this.name = name;
+    function Player(name, team, position, jersey, imageLink, id) {
+        this.fullname = name;
+        this.pro_team = team;
         this.position = position;
-        this.playerNumber = playerNumber;
-        this.imageLink = imageLink;
-        this.id = guid();
+        this.jersey = jersey;
+        this.photo = imageLink;
+        this.id = id;
 
         var guid = function () { //Generates a random ID that should never conflict
             function s4() {
@@ -25,22 +26,71 @@ function PlayerService() {
                 s4() + '-' + s4() + s4() + s4();
         }
 
+        if(id === undefined || id == -1){
+            var rando = guid();
+            this.id = rando;
+        }
+
     }
 
-    this.getPlayers = function () {
-        return _players;
+    this.getPageIndex = function () {
+        return _pageIndex;
     }
 
-    this.addPlayers = function (name, position, playerNumber) {
-        if (!name || !position || !playerNumber) {
+    this.setPageIndex = function (index) {
+        _pageIndex = index;
+        return this.getPageIndex();
+    }
+
+    this.getMyPlayers = function () {
+        return _myPlayers;
+    }
+
+    this.getNFLPlayers = function () {
+        return _nflPlayers;
+    }
+    this.getFilteredPlayers = function(){
+        return _filteredPlayers;
+    }
+
+    this.setFilteredPlayers = function(players){
+        _filteredPlayers = players;
+    }
+
+    this.findNFLByID = function(id){
+        for(var i = 0; i < _nflPlayers.length; i++){
+            if(_nflPlayers[i].id == id){
+                return _nflPlayers[i];
+            }
+        }
+        return new Player("error","error", "error", 0, "", -2);
+    }
+    this.findMyPlayerByID = function(id){
+        for(var i = 0; i < _myPlayers.length; i++){
+            if(_myPlayers[i].id == id){
+                return _myPlayers[i];
+            }
+        }
+        return new Player("error","error", "error", 0, "", -2);
+    }
+
+    this.addPlayer = function (name, team, position, jersey, imageLink, id) {
+        if (!name || !position || !imageLink || !team) {
+            console.log("Tried to add invalid player!");
             return;
         }
-        var player = new Player(name, position, playerNumber);
-        _players.push(player);
+        if(this.findMyPlayerByID(id).id != -2){
+            console.log(id);
+            console.log(this.findMyPlayerByID(id).id);
+            console.log("Player already exists!");
+            return;
+        }
+        var player = new Player(name, team, position, jersey, imageLink, id);
+        _myPlayers.push(player);
     }
 
     this.removePlayer = function (id) {
-        _players.forEach(function (player, index, arr) {
+        _myPlayers.forEach(function (player, index, arr) {
             if (player.id == id) {
                 return arr.splice(index, 1);
             }
@@ -51,37 +101,45 @@ function PlayerService() {
         var apiURL = "http://api.cbssports.com/fantasy/players/list?version=3.0&SPORT=football&response_format=json";
 
         //Check out local storage to see if we have data stored already
-        var localData = localStorage.getItem('playersData');
+        var localData = localStorage.getItem('_nflPlayers');
         if (localData) {
-            playersData = JSON.parse(localData);
-            return callback(playersData);
+            _nflPlayers = JSON.parse(localData);
+            return callback(_nflPlayers);
         }
 
         var url = "http://bcw-getter.herokuapp.com/?url=";
         var endPointUrl = url + encodeURIComponent(apiURL);
         $.getJSON(endPointUrl, function (data) {
             console.log(data);
-            playersData = data.body.players;
+            _nflPlayers = data.body.players;
             if (debugFlag) {
                 console.log("Player Data Ready");
                 console.log("Writing Player data to local storage...");
             }
-            localStorage.setItem("playersData", JSON.stringify(playersData));
+            localStorage.setItem("_nflPlayers", JSON.stringify(_nflPlayers));
             if (debugFlag) { console.log("Completed writing Player Data to local storage!"); }
-            callback(playersData);
+            callback(_nflPlayers);
         });
     }
 
     this.massageNFL = function () {
-        var newArr = playersData.filter(function (player) {
+        var newArr = _nflPlayers.filter(function (player) {
             if (player.firstname == "" || player.pro_status == null) {
                 return false;
             }
             return true;
         });
 
-        playersData = newArr;
-        if (debugFlag) { console.log(playersData); }
+        _nflPlayers = newArr;
+
+        _nflPlayers.forEach(function(player){
+            if(player.jersey === undefined){
+                player.jersey = 00;
+            }
+        });
+        _filteredPlayers = _nflPlayers;
+
+        if (debugFlag) { console.log(_nflPlayers); }
 
         // var tempArr = [];
         // playersData.forEach(function (player) {
@@ -93,20 +151,20 @@ function PlayerService() {
         // $.each(tempArr, function (i, el) {
         //     if ($.inArray(el, uniqueNames) === -1) uniqueNames.push(el);
         // });
-        
+
         // console.log(uniqueNames.sort());
 
     }
 
-    this.formatPosition = function(positionText){
-        switch(positionText){
-            case 'DB':  
+    this.formatPosition = function (positionText) {
+        switch (positionText) {
+            case 'DB':
                 return 'Defensive Back';
             case 'DL':
                 return 'Defensive Line';
             case 'K':
                 return 'Kicker';
-            case 'LB': 
+            case 'LB':
                 return 'Linebacker';
             case 'QB':
                 return 'Quarterback';
@@ -120,51 +178,121 @@ function PlayerService() {
         return 'Invalid Position';
     }
 
-
+    this.formatTeam = function (teamText) {
+        switch (teamText) {
+            case 'ARI':
+                return 'Arizona Cardinals';
+            case 'ATL':
+                return 'Atlanta Falcons';
+            case 'BAL':
+                return 'Baltimore Ravens';
+            case 'BUF':
+                return 'Buffalo Bills';
+            case 'CAR':
+                return 'Carolina Panthers';
+            case 'CHI':
+                return 'Chicago Bears'
+            case 'CIN':
+                return 'Cincinnati Bengals';
+            case 'CLE':
+                return 'Cleveland Browns';
+            case 'DAL':
+                return 'Dallas Cowboys';
+            case 'DEN':
+                return 'Denver Broncos';
+            case 'DET':
+                return 'Detroit Lions';
+            case 'GB':
+                return 'Green Bay Packers';
+            case 'HOU':
+                return 'Houston Texans';
+            case 'IND':
+                return 'Indianapolis Colts';
+            case 'JAC':
+                return 'Jacksonville Jaguars';
+            case 'KC':
+                return 'Kansas City Chiefs';
+            case 'LAR':
+                return 'Los Angelos Rams';
+            case 'MIA':
+                return 'Miami Dolphins';
+            case 'MIN':
+                return 'Minnesota Vikings';
+            case 'NE':
+                return 'New England Patriots';
+            case 'NO':
+                return 'New Orleans Saints';
+            case 'NYG':
+                return 'New York Giants';
+            case 'NYJ':
+                return 'New York Jets';
+            case 'OAK':
+                return 'Oakland Raiders';
+            case 'PHI':
+                return 'Philadelphia Eagles';
+            case 'PIT':
+                return 'Pittsburgh Steelers';
+            case 'SD':
+                return 'San Diego Chargers';
+            case 'SEA':
+                return 'Seattle Seahawks';
+            case 'SF':
+                return 'San Francisco 49ers';
+            case 'TB':
+                return 'Tampa Bay Buccaneers';
+            case 'TEN':
+                return 'Tennessee Titans';
+            case 'WAS':
+                return 'Washington Redskins';
+        }
+        return 'Invalid Position';
+    }
 }
 
 var myPlayerService = new PlayerService();
 myPlayerService.getNFL(function (item) {
-    console.log(item);
+    myPlayerService.massageNFL();
+    updateNFLRoster(myPlayerService.getNFLPlayers());
 });
-myPlayerService.massageNFL();
 
 
 
 
-$('form').on('submit', function (e) {
-    e.preventDefault();
-    var form = this;
-    var player = new Player(form.playerName.value, form.playerPosition.value, form.playerNumber.value)
-    if (debugFlag) { console.log(player); }
-    playerArr.push(player)
 
-    if (debugFlag) { console.log(playerArr); }
-    updateMyRoster(playerArr);
-    //form.reset();
-})
+// $('form').on('submit', function (e) {
+//     e.preventDefault();
+//     var form = this;
+//     var player = new Player(form.playerName.value, form.playerPosition.value, form.playerNumber.value)
+//     if (debugFlag) { console.log(player); }
+//     playerArr.push(player)
+
+//     if (debugFlag) { console.log(playerArr); }
+//     updateMyRoster(playerArr);
+//     //form.reset();
+// })
 
 function updateMyRoster(playerArr) {
     var template = '';
+
 
     playerArr.forEach(function (player) {
         template += `
         <div class="column small-6 large-3 card-container">
       <div class="card text-center">
         <button id="remove-${player.id}" class="button alert remove-button">Remove Player</button>
-        <img class="player-image" src="${player.photo}" alt="NFL Player Silhouette">
+        <img class="player-image" src="${player.photo}" alt="Photo of: ${player.fullname}">
         <p class="player-name">${player.fullname}</p>
-        
+        <p class="player-position">${myPlayerService.formatTeam(player.pro_team)}</p>
         <p class="player-position">${myPlayerService.formatPosition(player.position)}</p>
-        <p class="player-number">#${player.playerNumber}</p>
+        <p class="player-number">#${player.jersey}</p>
       </div>
     </div>
     `
     });
 
-    if (template == "") { //Blank card if empty
-        template = `
-        <div class="column small-6 large-3 card-container">
+    if(template == ''){
+        template +=`
+            <div class="column small-6 large-3 card-container">
       <div class="card text-center">
         <button class="button alert remove-button disabled">Remove Player</button>
         <img class="player-image" src="resources/player-shadow.jpg" alt="NFL Player Silhouette">
@@ -182,30 +310,154 @@ function updateMyRoster(playerArr) {
 
 }
 
-function updateNFLRoster(playerArr, pageIndex){
+function updateNFLRoster(playerArr) {
     var template = "";
-    var indexStart = pageIndex * 50;
-    var indexEnd = indexStart + 50;
-    
-    for(var i = 0; i < 50; i++){
-        var player = playerArr[i];
-        template += `
-            <div class="column small-6 large-3 card-container">
-                <div class="card text-center">
-                    <button class="button alert remove-button">Remove Player</button>
-                    <img class="player-image" src="resources/player-shadow.jpg" alt="NFL Player Silhouette">
-                    <p class="player-name">${player.name}</p>
-                    <p class="player-position">${player.position}</p>
-                    <p class="player-number">#${player.playerNumber}</p>
-                </div>
-            </div>
-        `
+    var pageIndex = myPlayerService.getPageIndex() * 50;
+
+    var tempArr = playerArr.slice(pageIndex, pageIndex + 50);
+
+    var nextButton = ``;
+    var prevButton = ``;
+
+    if((pageIndex+50) <= playerArr.length ){
+        nextButton = `<button id="next" class="button success next-button">NEXT</button>`
     }
+    if((pageIndex-50) >= 0){
+        prevButton = `<button id="prev" class="button success prev-button">PREV</button>`
+    }
+
+    template += `
+        <div class="column small-5 text-right">
+        ${prevButton}
+        </div>
+        <div class="column small-2 text-center">
+            <p class="text-center">Showing ${pageIndex} - ${pageIndex + tempArr.length} of ${playerArr.length}</p> 
+        </div>
+        <div class="column small-5">
+        ${nextButton}
+        </div>
+    `
+
+    tempArr.forEach(function (player) {
+        template += `
+        <div class="column small-6 large-3 card-container">
+      <div class="card text-center">
+        <button id="add-${player.id}" class="button success add-button">Add Player To Roster</button>
+        <img class="player-image" src="${player.photo}" alt="Photo of: ${player.fullname}">
+        <p class="player-name">${player.fullname}</p>
+        <p class="player-position">${myPlayerService.formatTeam(player.pro_team)}</p>
+        <p class="player-position">${myPlayerService.formatPosition(player.position)}</p>
+        <p class="player-number">#${player.jersey}</p>
+      </div>
+    </div>
+    `
+    });
+
+    var element = $('#row-nfl-container');
+    element.empty();
+    element.append(template);
 }
+
+function filter(playerArr){
+    var name = $('#nfl-search-name').val();
+    var team = $('#nfl-search-team').val();
+    var pos = $('#nfl-search-position').val();
+    var num = $('#nfl-search-number').val();
+    var tempArr = playerArr;
+
+    tempArr = tempArr.filter(function(player){
+        if(player.fullname.toLowerCase().includes(name.toLowerCase()) || name == ""){return true}
+        return false;
+    })
+
+    tempArr = tempArr.filter(function(player){
+        if(player.pro_team == team || team == 'ANY'){return true}
+        return false;
+    })
+
+    tempArr = tempArr.filter(function(player){
+        if(player.position == pos || pos == 'ANY'){return true}
+        return false;
+    })
+
+    tempArr = tempArr.filter(function(player){
+        if(player.jersey == num || num == ""){return true}
+        return false;
+    })
+    myPlayerService.setFilteredPlayers(tempArr);
+    return tempArr;
+}
+
+function clearFilter(){
+    var name = $('#nfl-search-name').val("");
+    var team = $('#nfl-search-team').val('ANY');
+    var pos = $('#nfl-search-position').val('ANY');
+    var num = $('#nfl-search-number').val("");
+}
+
+function getElementPlayerID(element){
+    var index = element.id.indexOf('-') + 1;
+    var id = element.id.slice(index, element.id.length);
+    return id;
+}
+
+$('#button-filter').on('click', function(e){
+    e.preventDefault();
+    if(debugFlag){console.log("Filter clicked!")} 
+    myPlayerService.setPageIndex(0);
+    updateNFLRoster(filter(myPlayerService.getNFLPlayers()))
+});
+
+$('#button-filter-clear').on('click', function(e){
+    e.preventDefault();
+    if(debugFlag){console.log("Filter Clear clicked!")} 
+    myPlayerService.setPageIndex(0);
+    updateNFLRoster(myPlayerService.getNFLPlayers())
+    clearFilter();
+});
+
+$('#button-add-custom').on('click', function(e){
+    e.preventDefault();
+    if(debugFlag){console.log("Add Custom clicked!")} 
+    myPlayerService.addPlayer(
+        $('#nfl-add-name').val(),
+        $('#nfl-add-team').val(),
+        $('#nfl-add-position').val(),
+        $('#nfl-add-number').val(),
+        $('#nfl-add-url').val()
+    )
+    updateMyRoster(myPlayerService.getMyPlayers());
+});
 
 //Event Delegation
 $('#row-roster-container').on('click', '.remove-button', function (e) {
-    console.log("Remove clicked!!");
-    console.log(this);
+    e.preventDefault();
+    var id = getElementPlayerID(this);
+    myPlayerService.removePlayer(id);
+    updateMyRoster(myPlayerService.getMyPlayers());
 });
+
+$('#row-nfl-container').on('click', '.add-button', function (e) {
+    e.preventDefault();
+    var id = getElementPlayerID(this);
+    var player = myPlayerService.findNFLByID(id);
+    myPlayerService.addPlayer(player.fullname, player.pro_team, player.position, player.jersey, player.photo, player.id);
+    updateMyRoster(myPlayerService.getMyPlayers());
+});
+
+$('#row-nfl-container').on('click', '.next-button', function (e) {
+    e.preventDefault();
+    myPlayerService.setPageIndex((myPlayerService.getPageIndex() + 1));
+    updateNFLRoster(myPlayerService.getFilteredPlayers())
+});
+
+$('#row-nfl-container').on('click', '.prev-button', function (e) {
+    e.preventDefault();
+    myPlayerService.setPageIndex((myPlayerService.getPageIndex() - 1));
+    updateNFLRoster(myPlayerService.getFilteredPlayers())
+});
+
+
+
+
 

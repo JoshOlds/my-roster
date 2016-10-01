@@ -21,6 +21,10 @@ body{
     text-align: center;
 }
 
+.text-right{
+    text-align: right;
+}
+
 .header-background{
     background: #dddddd;
     margin-bottom: 20px;
@@ -41,12 +45,17 @@ body{
 
     .card{
         box-shadow: 0px 0px 5px black;
+        min-height: 450px;
+        max-height: 450px;
+        overflow: hidden;
+        margin: 12px 0px;
 
         .player-image{
-            padding: 10px;
+            width: 200px;
+            height: 200px;
         }
         .button{
-            margin-top: 5px;
+            margin-top: 15px;
         }
         .player-name{
             font-size: 24px;
@@ -54,13 +63,13 @@ body{
             margin: 5px;
         }
         .player-position{
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             color:grey;
             margin: 5px;
         }
         .player-number{
-            font-size: 24px;
+            font-size: 20px;
             color: grey;
             margin: 5px 0px 15px 0px;
             padding-bottom: 10px;
