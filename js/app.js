@@ -98,7 +98,7 @@ function PlayerService() {
     }
 
     this.getNFL = function loadPlayersData(callback) {
-        var apiURL = "http://api.cbssports.com/fantasy/players/list?version=3.0&SPORT=football&response_format=json";
+        var apiURL = "https://api.cbssports.com/fantasy/players/list?version=3.0&SPORT=football&response_format=json";
 
         //Check out local storage to see if we have data stored already
         var localData = localStorage.getItem('_nflPlayers');
@@ -137,6 +137,11 @@ function PlayerService() {
                 player.jersey = 00;
             }
         });
+
+        _nflPlayers.forEach(function(player){
+            player.photo = player.photo.replace("http", "https");
+        });
+        
         _filteredPlayers = _nflPlayers;
 
         if (debugFlag) { console.log(_nflPlayers); }
