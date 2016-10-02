@@ -28,10 +28,22 @@ body{
 .header-background{
     background: #dddddd;
     margin-bottom: 20px;
+    border-bottom: 3px solid black;
 }
 
 .header-text{
-    font-size: 36px;
+    font-size: 48px;
+    font-weight: bold;
+    color: maroon;
+    text-shadow: 0px 0px 10px white;
+    margin: 10px;
+}
+
+.roster-text{
+    font-size: 24px;
+    font-weight: bold;
+    color: maroon;
+    text-shadow: 0px 0px 10px white;
     margin: 10px;
 }
 
@@ -44,6 +56,7 @@ body{
     background: white;
 
     .card{
+        background: linear-gradient(white, lightgray);
         box-shadow: 0px 0px 5px black;
         min-height: 450px;
         max-height: 450px;
@@ -53,6 +66,7 @@ body{
         .player-image{
             width: 200px;
             height: 200px;
+            //border: 2px solid black;
         }
         .button{
             margin-top: 15px;
