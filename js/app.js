@@ -406,6 +406,13 @@ function getElementPlayerID(element){
     return id;
 }
 
+function updateAddPlayerClicked(id){
+    var element = $('#add-'+id);
+    element.text("Player Added!");
+    element.removeClass("success");
+    element.addClass("button-glow");
+}
+
 $('#button-filter').on('click', function(e){
     e.preventDefault();
     if(debugFlag){console.log("Filter clicked!")} 
@@ -448,6 +455,7 @@ $('#row-nfl-container').on('click', '.add-button', function (e) {
     var player = myPlayerService.findNFLByID(id);
     myPlayerService.addPlayer(player.fullname, player.pro_team, player.position, player.jersey, player.photo, player.id);
     updateMyRoster(myPlayerService.getMyPlayers());
+    updateAddPlayerClicked(id);
 });
 
 $('#row-nfl-container').on('click', '.next-button', function (e) {
