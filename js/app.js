@@ -107,7 +107,7 @@ function PlayerService() {
             return callback(_nflPlayers);
         }
 
-        var url = "http://bcw-getter.herokuapp.com/?url=";
+        var url = "https://bcw-getter.herokuapp.com/?url=";
         var endPointUrl = url + encodeURIComponent(apiURL);
         $.getJSON(endPointUrl, function (data) {
             console.log(data);
@@ -141,7 +141,7 @@ function PlayerService() {
         _nflPlayers.forEach(function(player){
             player.photo = player.photo.replace("http", "https");
         });
-        
+
         _filteredPlayers = _nflPlayers;
 
         if (debugFlag) { console.log(_nflPlayers); }
