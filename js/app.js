@@ -77,16 +77,17 @@ function PlayerService() {
     this.addPlayer = function (name, team, position, jersey, imageLink, id) {
         if (!name || !position || !imageLink || !team) {
             console.log("Tried to add invalid player!");
-            return;
+            return false;
         }
         if(this.findMyPlayerByID(id).id != -2){
             console.log(id);
             console.log(this.findMyPlayerByID(id).id);
             console.log("Player already exists!");
-            return;
+            return false;
         }
         var player = new Player(name, team, position, jersey, imageLink, id);
         _myPlayers.push(player);
+        return true;
     }
 
     this.removePlayer = function (id) {
@@ -430,15 +431,20 @@ $('#button-filter-clear').on('click', function(e){
 
 $('#button-add-custom').on('click', function(e){
     e.preventDefault();
+    var url = $('#nfl-add-url').val();
     if(debugFlag){console.log("Add Custom clicked!")} 
-    myPlayerService.addPlayer(
+    if(url == ""){url = "resources/player-shadow.jpg"}
+    var success = myPlayerService.addPlayer(
         $('#nfl-add-name').val(),
         $('#nfl-add-team').val(),
         $('#nfl-add-position').val(),
         $('#nfl-add-number').val(),
-        $('#nfl-add-url').val()
+        url
     )
     updateMyRoster(myPlayerService.getMyPlayers());
+    if(success){
+        $("html, body").animate({ scrollTop: 0 }, "slow");
+    }
 });
 
 //Event Delegation
