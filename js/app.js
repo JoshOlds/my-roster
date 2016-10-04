@@ -8,6 +8,31 @@ function PlayerService() {
     var _nflPlayers = []; // NFL players data
     var _filteredPlayers = [];
 
+    var _users = [];
+    loadUsers();
+
+    function User(username){
+        this.username = username;
+        this.roster = [];
+    }
+
+    this.saveUsers = function(){
+        localStorage.setItem("users", JSON.stringify(_users));
+        console.log("Saving Users!")
+    }
+    function loadUsers(){
+        var localData = localStorage.getItem("users");
+        if (localData) {
+            _users = JSON.parse(localData);
+        }
+    }
+    this.addUser = function(username){
+        _users.push(new User(username));
+    }
+    this.getUsers = function(){
+        return _users;
+    }
+
     function Player(name, team, position, jersey, imageLink, id) {
         this.fullname = name;
         this.pro_team = team;
@@ -96,6 +121,22 @@ function PlayerService() {
                 return arr.splice(index, 1);
             }
         });
+    }
+
+    this.saveUserData = function(rosterName){
+        localStorage.setItem(rosterName, JSON.stringify(_myPlayers));
+    }
+
+    this.loadUserData = function (rosterName){
+        //Check out local storage to see if we have data stored already
+        
+        var localData = localStorage.getItem(rosterName);
+        if (localData) {
+            _myPlayers = JSON.parse(localData);
+        }else{
+            _myPlayers = [];
+        }
+        updateMyRoster(_myPlayers);
     }
 
     this.getNFL = function loadPlayersData(callback) {
@@ -260,6 +301,8 @@ myPlayerService.getNFL(function (item) {
     myPlayerService.massageNFL();
     updateNFLRoster(myPlayerService.getNFLPlayers());
 });
+updateUserList();
+
 
 
 
@@ -414,6 +457,20 @@ function updateAddPlayerClicked(id){
     element.addClass("button-glow");
 }
 
+
+function updateUserList(){
+    var users = myPlayerService.getUsers();
+    var template = ``;
+    users.forEach(function(item){
+        template += `
+            <option>${item.username}</option>
+        `
+    });
+    var elem = $('#user-select');
+    elem.empty();
+    elem.append(template);  
+}
+
 $('#button-filter').on('click', function(e){
     e.preventDefault();
     if(debugFlag){console.log("Filter clicked!")} 
@@ -475,6 +532,40 @@ $('#row-nfl-container').on('click', '.prev-button', function (e) {
     myPlayerService.setPageIndex((myPlayerService.getPageIndex() - 1));
     updateNFLRoster(myPlayerService.getFilteredPlayers())
 });
+
+$('#add-user').on('click', function (e) {
+    e.preventDefault();
+    var elem = $('#add-user-area')
+    elem.empty();
+    elem.append(`
+        <form id="form-new-user">
+                <input id="field-new-user"  type="text" placeholder="Username" >
+            </form> 
+    `);
+    
+});
+
+$("#header-area").on('submit', "#form-new-user", function(e){
+       // debugger;
+        e.preventDefault;
+        console.log("test");
+        myPlayerService.addUser($('#field-new-user').val())
+        $('#field-new-user').remove();
+        updateUserList();
+        $('#add-user-area').empty();
+        myPlayerService.saveUsers();
+        return false;
+    });
+
+$("#button-save").on('click', function(e){
+    var elem = $('#user-select');
+    myPlayerService.saveUserData(elem.val());
+});
+$("#button-load").on('click', function(e){
+    var elem = $('#user-select');
+    myPlayerService.loadUserData(elem.val());
+});
+
 
 
 
