@@ -7,19 +7,42 @@
   <link rel="stylesheet" href="css/app.css">
   <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
 </head>
 
 <body>
 
-  <div class="row header-background full-width">
-    <div class="column small-12">
+  <div class="row header-background full-width" id="header-area">
+    <div class="column small-12 large-offset-3 large-6 ">
       <h3 class="text-center header-text">My NFL Roster</h3>
+    </div>
+    <div class="column small-2 large-1 align-self-middle text-right">
+      <button id="add-user" class="button-add-user"><i class="fa fa-user-plus" aria-hidden="true"></i> </button>
+    </div>
+    <div class="column small-8 large-2">
+      
+      <form id="roster-select" action="">
+        <label><strong>Select User</strong></label>
+        <select name="User Select" id="user-select">
+
+        </select>
+      </form>
+
+      <div id="add-user-area">
+
+      </div>
+      
+
     </div>
   </div>
 
   <div class="row align-center">
     <div class="column small-12">
       <p class="roster-text text-center">Add player cards to your roster from the NFL players below!</p>
+    </div>
+    <div class="column small-12 text-center">
+      <button id="button-load" class="button large button-filter">Load Roster</button>
+      <button id="button-save" class="button success large button-filter-clear">Save Roster</button>
     </div>
   </div>
   <div class="row align-center row-roster-container" id="row-roster-container">
