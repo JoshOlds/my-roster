@@ -471,6 +471,14 @@ function updateUserList(){
     elem.append(template);  
 }
 
+function savedAnimation(){
+    var button = $("#button-save");
+    button.text("Roster Saved!");
+    setTimeout(function(){
+        button.text("Save Roster");
+    }, 1000);
+}
+
 $('#button-filter').on('click', function(e){
     e.preventDefault();
     if(debugFlag){console.log("Filter clicked!")} 
@@ -560,6 +568,7 @@ $("#header-area").on('submit', "#form-new-user", function(e){
 $("#button-save").on('click', function(e){
     var elem = $('#user-select');
     myPlayerService.saveUserData(elem.val());
+    savedAnimation();
 });
 $("#button-load").on('click', function(e){
     var elem = $('#user-select');
