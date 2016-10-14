@@ -1,4 +1,4 @@
-var debugFlag = true;
+var debugFlag = false;
 
 
 function PlayerService() {
@@ -181,25 +181,16 @@ function PlayerService() {
         });
 
         _nflPlayers.forEach(function(player){
-            player.photo = player.photo.replace("http", "https");
+            if(!player.photo.includes("https")){
+                player.photo = player.photo.replace("http", "https");
+            }
+            
         });
 
         _filteredPlayers = _nflPlayers;
 
         if (debugFlag) { console.log(_nflPlayers); }
 
-        // var tempArr = [];
-        // playersData.forEach(function (player) {
-        //     //tempArr.push(player.pro_team);
-        //     tempArr.push(player.position)
-        // });
-        // console.log(tempArr);
-        // var uniqueNames = [];
-        // $.each(tempArr, function (i, el) {
-        //     if ($.inArray(el, uniqueNames) === -1) uniqueNames.push(el);
-        // });
-
-        // console.log(uniqueNames.sort());
 
     }
 
@@ -303,30 +294,13 @@ myPlayerService.getNFL(function (item) {
 });
 updateUserList();
 
-
-
-
-
-
-// $('form').on('submit', function (e) {
-//     e.preventDefault();
-//     var form = this;
-//     var player = new Player(form.playerName.value, form.playerPosition.value, form.playerNumber.value)
-//     if (debugFlag) { console.log(player); }
-//     playerArr.push(player)
-
-//     if (debugFlag) { console.log(playerArr); }
-//     updateMyRoster(playerArr);
-//     //form.reset();
-// })
-
 function updateMyRoster(playerArr) {
     var template = '';
 
 
     playerArr.forEach(function (player) {
         template += `
-        <div class="column small-6 large-3 card-container">
+        <div class="column small-8 large-3 card-container">
       <div class="card text-center">
         <button id="remove-${player.id}" class="button alert remove-button">Remove Player</button>
         <img class="player-image" src="${player.photo}" alt="Photo of: ${player.fullname}">
@@ -341,7 +315,7 @@ function updateMyRoster(playerArr) {
 
     if(template == ''){
         template +=`
-            <div class="column small-6 large-3 card-container">
+            <div class="column small-8 large-3 card-container">
       <div class="card text-center">
         <button class="button alert remove-button disabled">Remove Player</button>
         <img class="player-image" src="resources/player-shadow.jpg" alt="NFL Player Silhouette">
@@ -376,20 +350,20 @@ function updateNFLRoster(playerArr) {
     }
 
     template += `
-        <div class="column small-5 text-right">
+        <div class="column small-4 text-right">
         ${prevButton}
         </div>
-        <div class="column small-2 text-center">
+        <div class="column small-4 text-center">
             <p class="text-center">Showing ${pageIndex} - ${pageIndex + tempArr.length} of ${playerArr.length}</p> 
         </div>
-        <div class="column small-5">
+        <div class="column small-4">
         ${nextButton}
         </div>
     `
 
     tempArr.forEach(function (player) {
         template += `
-        <div class="column small-6 large-3 card-container">
+        <div class="column small-8 large-3 card-container">
       <div class="card text-center">
         <button id="add-${player.id}" class="button success add-button">Add Player To Roster</button>
         <img class="player-image" src="${player.photo}" alt="Photo of: ${player.fullname}">
